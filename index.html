@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TecMarketing — Gestão e Relatórios de Campanhas para Pequenas Agências</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            dark: {
+              900: '#070A10',
+              850: '#0A0E18',
+              800: '#0F1424',
+              700: '#151C30',
+              600: '#1D2742',
+              500: '#283659',
+              400: '#4A5B82',
+            },
+            tec: {
+              purple: '#7C3AED',
+              'purple-hover': '#6D28D9',
+              'purple-light': '#8B5CF6',
+              cyan: '#06B6D4',
+              'cyan-light': '#38BDF8',
+              green: '#10B981',
+              card: '#111625',
+              'card-border': '#1E2640',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- jsPDF & AutoTable for client-side custom PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  
+  <!-- Confetti for milestone actions -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="static/css/styles.css">
+</head>
+
+<body class="bg-[#090D16] text-slate-100 min-h-screen flex antialiased select-none md:select-auto">
+
+  <!-- ==================== SIDEBAR (Slide 12 Replica) ==================== -->
+  <aside class="w-64 bg-[#0A0E18] border-r border-[#192138] flex flex-col justify-between flex-shrink-0 z-20 min-h-screen">
+    <div>
+      <!-- Brand Logo Header -->
+      <div class="h-20 flex items-center px-6 gap-3 border-b border-[#151D33]">
+        <div class="flex items-end gap-1 h-7">
+          <span class="w-1.5 h-3 bg-purple-500 rounded-sm"></span>
+          <span class="w-1.5 h-5 bg-purple-400 rounded-sm"></span>
+          <span class="w-1.5 h-7 bg-purple-600 rounded-sm"></span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xl font-bold tracking-tight text-white flex items-center gap-1">
+            TecMarketing
+          </span>
+          <span class="text-[10px] text-purple-400 uppercase tracking-wider font-semibold">Micro-SaaS • Gabriel & Allan</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="p-4 space-y-1.5">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-purple-600 text-white shadow-lg shadow-purple-600/30">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+          <span>Dashboard</span>
+        </button>
+
+        <button onclick="switchTab('campaigns')" id="nav-campaigns" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-[#131A2E]">
+          <i data-lucide="megaphone" class="w-5 h-5"></i>
+          <span>Campanhas</span>
+          <span id="badge-campaigns-count" class="ml-auto text-xs px-2 py-0.5 rounded-full bg-[#1D2742] text-slate-300">0</span>
+        </button>
+
+        <button onclick="switchTab('reports')" id="nav-reports" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-[#131A2E]">
+          <i data-lucide="file-text" class="w-5 h-5"></i>
+          <span>Relatórios</span>
+        </button>
+
+        <button onclick="switchTab('ai-insights')" id="nav-ai-insights" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-[#131A2E]">
+          <i data-lucide="sparkles" class="w-5 h-5 text-purple-400"></i>
+          <span>IA Insights ✨</span>
+        </button>
+
+        <button onclick="switchTab('clients')" id="nav-clients" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-[#131A2E]">
+          <i data-lucide="users" class="w-5 h-5"></i>
+          <span>Clientes</span>
+        </button>
+
+        <button onclick="switchTab('integrations')" id="nav-integrations" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-[#131A2E]">
+          <i data-lucide="link" class="w-5 h-5"></i>
+          <span>Integrações</span>
+        </button>
+
+        <button onclick="switchTab('settings')" id="nav-settings" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-[#131A2E]">
+          <i data-lucide="settings" class="w-5 h-5"></i>
+          <span>Configurações</span>
+        </button>
+
+        <!-- Pitch Deck / Roteiro dos 11 Slides -->
+        <div class="pt-4 mt-2 border-t border-[#182035]">
+          <button onclick="switchTab('pitch')" id="nav-pitch" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all">
+            <i data-lucide="presentation" class="w-4 h-4 text-emerald-400"></i>
+            <span>Roteiro do Pitch (11 Slides)</span>
+          </button>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Bottom Subscription Plan Card (Matches Slide 10 & 12) -->
+    <div class="p-4">
+      <div class="bg-gradient-to-br from-[#141A2D] to-[#1A1838] border border-purple-500/20 rounded-2xl p-4 relative overflow-hidden group">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300">
+            <i data-lucide="crown" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-white">Plano Profissional</h4>
+            <span class="text-[11px] text-purple-300 font-mono">R$ 99 / mês</span>
+          </div>
+        </div>
+        <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+          Aproveite todos os recursos do TecMarketing com IA e PDF ilimitados.
+        </p>
+        <button onclick="openModal('modal-plans')" class="w-full py-2 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600 border border-purple-500/30 text-purple-200 hover:text-white text-xs font-semibold transition-all">
+          Gerenciar plano
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    
+    <!-- Topbar Header -->
+    <header class="h-20 bg-[#0A0E18]/80 backdrop-blur-md border-b border-[#192138] px-8 flex items-center justify-between sticky top-0 z-10">
+      <div>
+        <h1 id="page-header-title" class="text-2xl font-bold text-white tracking-tight">Dashboard</h1>
+        <p id="page-header-subtitle" class="text-xs text-slate-400 mt-0.5">Visão geral das suas campanhas</p>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Client Filter Dropdown -->
+        <div class="relative">
+          <select id="filter-client" onchange="applyFilters()" class="bg-[#111625] text-xs font-medium text-slate-200 border border-[#1E2640] rounded-xl px-3 py-2 pr-8 appearance-none focus:outline-none focus:border-purple-500 transition-colors cursor-pointer">
+            <option value="all">🏢 Todos os clientes</option>
+          </select>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-2.5 top-2.5 pointer-events-none"></i>
+        </div>
+
+        <!-- Date Range Filter (Slide 12: Últimos 30 dias) -->
+        <div class="relative">
+          <button id="btn-period-filter" class="flex items-center gap-2 bg-[#111625] text-xs font-medium text-slate-200 border border-[#1E2640] rounded-xl px-3.5 py-2 hover:border-purple-500 transition-colors">
+            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+            <span>Últimos 30 dias</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+        </div>
+
+        <!-- Notifications -->
+        <button onclick="toggleNotifications()" class="relative p-2 rounded-xl bg-[#111625] border border-[#1E2640] text-slate-400 hover:text-white hover:border-slate-600 transition-colors">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-purple-500"></span>
+        </button>
+
+        <!-- User Profile (Gabriel / Allan toggle) -->
+        <div class="relative flex items-center gap-3 pl-2 border-l border-[#192138]">
+          <div id="user-avatar" class="w-9 h-9 rounded-full bg-purple-600 text-white font-bold flex items-center justify-center text-sm ring-2 ring-purple-500/30">
+            G
+          </div>
+          <div class="hidden sm:block text-left cursor-pointer" onclick="toggleUserDropdown()">
+            <div class="flex items-center gap-1.5">
+              <span id="user-name" class="text-sm font-semibold text-white">Gabriel</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+            </div>
+            <span id="user-agency" class="text-[11px] text-slate-400 block">Agência Alpha</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Notification Toast Popup -->
+    <div id="notification-box" class="hidden absolute top-20 right-8 w-80 bg-[#121626] border border-[#1E2640] rounded-2xl shadow-2xl p-4 z-50">
+      <div class="flex items-center justify-between pb-3 border-b border-[#1E2640]">
+        <h5 class="text-xs font-semibold text-white uppercase tracking-wider">Notificações recentes</h5>
+        <span class="text-[10px] text-purple-400 font-medium">3 novas</span>
+      </div>
+      <div class="py-2 space-y-2.5 text-xs">
+        <div class="p-2 rounded-lg bg-[#181F36]/60 border border-purple-500/20">
+          <p class="font-medium text-white">Campanha atingiu ROAS 4.60x</p>
+          <span class="text-[10px] text-slate-400">Black Friday Antecipada • há 15 min</span>
+        </div>
+        <div class="p-2 rounded-lg bg-[#181F36]/60 border border-slate-700/30">
+          <p class="font-medium text-white">Relatório Mensal PDF gerado</p>
+          <span class="text-[10px] text-slate-400">Loja Virtual Express • há 1 hora</span>
+        </div>
+        <div class="p-2 rounded-lg bg-[#181F36]/60 border border-emerald-500/20">
+          <p class="font-medium text-white">CPC reduziu 8,7% no Meta Ads</p>
+          <span class="text-[10px] text-slate-400">Otimização automática • hoje</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 1: DASHBOARD VIEW (Slide 12 Replica) ==================== -->
+    <section id="view-dashboard" class="view-panel p-8 space-y-6">
+      
+      <!-- TOP 4 KPI CARDS (Slide 4 & 12) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- CARD 1: CTR -->
+        <div class="bg-[#111625] border border-[#1D2640] hover:border-purple-500/40 rounded-2xl p-5 transition-all relative overflow-hidden group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 transition-transform">
+              <i data-lucide="mouse-pointer" class="w-5 h-5"></i>
+            </div>
+            <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>
+              <span id="kpi-ctr-trend">+12,4%</span>
+            </span>
+          </div>
+          <div class="mt-4">
+            <span class="text-xs uppercase tracking-wider text-slate-400 font-medium">CTR</span>
+            <div class="flex items-baseline gap-2 mt-1">
+              <span id="kpi-ctr-value" class="text-3xl font-extrabold text-white tracking-tight">5,21%</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Cliques / Impressões (Eficiência)</p>
+          </div>
+        </div>
+
+        <!-- CARD 2: CPC -->
+        <div class="bg-[#111625] border border-[#1D2640] hover:border-purple-500/40 rounded-2xl p-5 transition-all relative overflow-hidden group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 transition-transform">
+              <i data-lucide="database" class="w-5 h-5"></i>
+            </div>
+            <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+              <i data-lucide="trending-down" class="w-3 h-3"></i>
+              <span id="kpi-cpc-trend">-8,7%</span>
+            </span>
+          </div>
+          <div class="mt-4">
+            <span class="text-xs uppercase tracking-wider text-slate-400 font-medium">CPC</span>
+            <div class="flex items-baseline gap-2 mt-1">
+              <span id="kpi-cpc-value" class="text-3xl font-extrabold text-white tracking-tight">R$ 1,32</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Investimento / Cliques (Custo médio)</p>
+          </div>
+        </div>
+
+        <!-- CARD 3: CPM -->
+        <div class="bg-[#111625] border border-[#1D2640] hover:border-purple-500/40 rounded-2xl p-5 transition-all relative overflow-hidden group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 transition-transform">
+              <i data-lucide="eye" class="w-5 h-5"></i>
+            </div>
+            <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+              <i data-lucide="trending-down" class="w-3 h-3"></i>
+              <span id="kpi-cpm-trend">-10,2%</span>
+            </span>
+          </div>
+          <div class="mt-4">
+            <span class="text-xs uppercase tracking-wider text-slate-400 font-medium">CPM</span>
+            <div class="flex items-baseline gap-2 mt-1">
+              <span id="kpi-cpm-value" class="text-3xl font-extrabold text-white tracking-tight">R$ 26,40</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Custo por mil impressões</p>
+          </div>
+        </div>
+
+        <!-- CARD 4: ROAS -->
+        <div class="bg-[#111625] border border-[#1D2640] hover:border-purple-500/40 rounded-2xl p-5 transition-all relative overflow-hidden group">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 transition-transform">
+              <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+            </div>
+            <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+              <i data-lucide="trending-up" class="w-3 h-3"></i>
+              <span id="kpi-roas-trend">+18,9%</span>
+            </span>
+          </div>
+          <div class="mt-4">
+            <span class="text-xs uppercase tracking-wider text-slate-400 font-medium">ROAS</span>
+            <div class="flex items-baseline gap-2 mt-1">
+              <span id="kpi-roas-value" class="text-3xl font-extrabold text-white tracking-tight">3,85x</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Receita / Investimento (Retorno)</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MIDDLE ROW: CHART & AI INSIGHTS (Slide 12 Replica) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left 2 Cols: Desempenho da campanha Chart -->
+        <div class="lg:col-span-2 bg-[#111625] border border-[#1D2640] rounded-2xl p-6 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-base font-bold text-white tracking-tight">Desempenho da campanha</h3>
+              <p class="text-xs text-slate-400">Evolução temporal de cliques e impressões</p>
+            </div>
+            <!-- Custom Legend matching Slide 12 -->
+            <div class="flex items-center gap-5 text-xs font-medium">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-sm shadow-purple-500"></span>
+                <span class="text-slate-300">Cliques</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400"></span>
+                <span class="text-slate-300">Impressões</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas Chart -->
+          <div class="h-64 relative w-full">
+            <canvas id="campaignPerformanceChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Right 1 Col: Insights da IA ✨ -->
+        <div class="bg-[#111625] border border-purple-500/30 rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden glow-purple">
+          <div>
+            <div class="flex items-center justify-between pb-3 border-b border-purple-500/20">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300">
+                  <i data-lucide="bot" class="w-4 h-4"></i>
+                </div>
+                <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+                  Insights da IA <span class="text-purple-400 text-xs">✨</span>
+                </h3>
+              </div>
+              <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                Automático
+              </span>
+            </div>
+
+            <!-- Dynamic Summary Text matching slide 12 -->
+            <div class="mt-4 p-4 rounded-xl bg-[#141A2D]/80 border border-[#202947] space-y-3">
+              <p id="ai-insight-text-1" class="text-xs text-slate-200 leading-relaxed font-normal">
+                Sua campanha apresentou um aumento de <strong class="text-purple-300">12,4%</strong> no CTR e um ROAS de <strong class="text-emerald-400">3,85x</strong>, indicando um bom retorno sobre o investimento.
+              </p>
+              <p id="ai-insight-text-2" class="text-xs text-slate-300 leading-relaxed font-normal">
+                O CPC reduziu <strong class="text-cyan-300">8,7%</strong>, o que mostra maior eficiência no custo dos cliques.
+              </p>
+            </div>
+
+            <!-- Recommendations list -->
+            <div id="ai-recommendations" class="mt-4 space-y-2 text-xs">
+              <div class="flex items-start gap-2 text-slate-400">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+                <span class="text-[11px]">Escalar 20% do orçamento na campanha de maior ROAS.</span>
+              </div>
+              <div class="flex items-start gap-2 text-slate-400">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400 flex-shrink-0 mt-0.5"></i>
+                <span class="text-[11px]">Público do Meta Ads apresentando CPM favorável de R$ 26,40.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Regenerate Button -->
+          <div class="pt-4 mt-4 border-t border-[#1D2640]">
+            <button onclick="regenerateAIInsights()" id="btn-refresh-ai" class="w-full py-2.5 px-4 rounded-xl bg-purple-600/20 hover:bg-purple-600 border border-purple-500/40 text-purple-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <span>Gerar nova análise com IA</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM ROW: RECENT CAMPAIGNS & QUICK ACTIONS (Slide 12 Replica) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left 2 Cols: Campanhas recentes Table -->
+        <div class="lg:col-span-2 bg-[#111625] border border-[#1D2640] rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-base font-bold text-white tracking-tight">Campanhas recentes</h3>
+              <p class="text-xs text-slate-400">Métricas consolidadas por canal de veiculação</p>
+            </div>
+            <button onclick="switchTab('campaigns')" class="text-xs text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1 transition-colors">
+              <span>Ver todas</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Table matching Slide 12 -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-[#1E2640] text-slate-400 uppercase text-[10px] tracking-wider">
+                  <th class="py-3 px-3">Campanha</th>
+                  <th class="py-3 px-3">Plataforma</th>
+                  <th class="py-3 px-3">CTR</th>
+                  <th class="py-3 px-3">CPC</th>
+                  <th class="py-3 px-3">ROAS</th>
+                  <th class="py-3 px-3">Status</th>
+                  <th class="py-3 px-3 text-right">Ação</th>
+                </tr>
+              </thead>
+              <tbody id="recent-campaigns-tbody" class="divide-y divide-[#182035] text-slate-300">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right 1 Col: Ações rápidas (Slide 12 Replica) -->
+        <div class="bg-[#111625] border border-[#1D2640] rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <i data-lucide="zap" class="w-4 h-4 text-purple-400"></i>
+              <h3 class="text-base font-bold text-white tracking-tight">Ações rápidas</h3>
+            </div>
+            <p class="text-xs text-slate-400 mb-6">Operações essenciais do seu Micro-SaaS</p>
+
+            <div class="space-y-3">
+              <!-- Action 1: Nova campanha (Solid Purple Button) -->
+              <button onclick="openModal('modal-new-campaign')" class="w-full py-3.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs flex items-center gap-3 transition-all shadow-lg shadow-purple-600/30 group">
+                <div class="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                  <i data-lucide="plus" class="w-4 h-4"></i>
+                </div>
+                <span>Nova campanha</span>
+              </button>
+
+              <!-- Action 2: Importar dados (CSV) -->
+              <button onclick="openModal('modal-import-csv')" class="w-full py-3.5 px-4 rounded-xl bg-[#151B2E] hover:bg-[#1A223B] border border-[#222C4A] hover:border-purple-500/40 text-slate-200 font-semibold text-xs flex items-center gap-3 transition-all">
+                <div class="w-6 h-6 rounded-lg bg-[#212C4A] flex items-center justify-center text-slate-300">
+                  <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                </div>
+                <span>Importar dados (CSV)</span>
+              </button>
+
+              <!-- Action 3: Gerar relatório (PDF) -->
+              <button onclick="openModal('modal-generate-pdf')" class="w-full py-3.5 px-4 rounded-xl bg-[#151B2E] hover:bg-[#1A223B] border border-[#222C4A] hover:border-purple-500/40 text-slate-200 font-semibold text-xs flex items-center gap-3 transition-all">
+                <div class="w-6 h-6 rounded-lg bg-[#212C4A] flex items-center justify-center text-slate-300">
+                  <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                </div>
+                <span>Gerar relatório (PDF)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live System Status Badge (Slide 8 - Confiabilidade) -->
+          <div class="mt-6 pt-4 border-t border-[#1D2640] flex items-center justify-between text-[11px] text-slate-500">
+            <span class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span class="text-slate-400">Banco de Dados Ativo</span>
+            </span>
+            <span class="text-purple-400 font-mono">LGPD Compliance</span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 2: CAMPANHAS VIEW ==================== -->
+    <section id="view-campaigns" class="view-panel hidden p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-white">Gerenciamento de Campanhas</h2>
+          <p class="text-xs text-slate-400">Organize todas as ações publicitárias de seus clientes</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="openModal('modal-import-csv')" class="py-2.5 px-4 rounded-xl bg-[#151B2E] border border-[#222C4A] text-xs font-semibold text-slate-300 hover:text-white transition-all flex items-center gap-2">
+            <i data-lucide="upload" class="w-4 h-4"></i>
+            <span>Importar CSV</span>
+          </button>
+          <button onclick="openModal('modal-new-campaign')" class="py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs flex items-center gap-2 transition-all shadow-md shadow-purple-600/30">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Adicionar Campanha</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters Bar -->
+      <div class="bg-[#111625] border border-[#1E2640] rounded-2xl p-4 flex flex-wrap items-center gap-4">
+        <div class="flex-1 min-w-[200px] relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none"></i>
+          <input type="text" id="campaign-search-input" onkeyup="filterCampaignsTable()" placeholder="Buscar por nome da campanha ou cliente..." class="w-full bg-[#0A0E18] text-xs text-white pl-10 pr-4 py-2.5 rounded-xl border border-[#1E2640] focus:outline-none focus:border-purple-500">
+        </div>
+
+        <select id="filter-campaigns-platform" onchange="filterCampaignsTable()" class="bg-[#0A0E18] text-xs text-slate-300 border border-[#1E2640] rounded-xl px-3 py-2.5 focus:outline-none focus:border-purple-500">
+          <option value="all">Todas as Plataformas</option>
+          <option value="Meta Ads">Meta Ads (Facebook/Instagram)</option>
+          <option value="Google Ads">Google Ads (Busca/YouTube)</option>
+        </select>
+
+        <select id="filter-campaigns-status" onchange="filterCampaignsTable()" class="bg-[#0A0E18] text-xs text-slate-300 border border-[#1E2640] rounded-xl px-3 py-2.5 focus:outline-none focus:border-purple-500">
+          <option value="all">Todos os Status</option>
+          <option value="Ativa">Ativa</option>
+          <option value="Pausada">Pausada</option>
+          <option value="Concluída">Concluída</option>
+        </select>
+      </div>
+
+      <!-- Full Table -->
+      <div class="bg-[#111625] border border-[#1E2640] rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-[#1E2640] text-slate-400 uppercase text-[10px] tracking-wider bg-[#0E1322]">
+                <th class="py-3.5 px-4">Campanha / Cliente</th>
+                <th class="py-3.5 px-4">Plataforma</th>
+                <th class="py-3.5 px-4">Impressões</th>
+                <th class="py-3.5 px-4">Cliques</th>
+                <th class="py-3.5 px-4">Investimento</th>
+                <th class="py-3.5 px-4">Receita</th>
+                <th class="py-3.5 px-4 text-purple-400 font-bold">CTR</th>
+                <th class="py-3.5 px-4 text-cyan-400 font-bold">CPC</th>
+                <th class="py-3.5 px-4 text-slate-400 font-bold">CPM</th>
+                <th class="py-3.5 px-4 text-emerald-400 font-bold">ROAS</th>
+                <th class="py-3.5 px-4">Status</th>
+                <th class="py-3.5 px-4 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="all-campaigns-tbody" class="divide-y divide-[#182035] text-slate-300">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: RELATÓRIOS VIEW ==================== -->
+    <section id="view-reports" class="view-panel hidden p-8 space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-white">Relatórios Personalizados em PDF</h2>
+          <p class="text-xs text-slate-400">Emita documentos executivos para seus clientes com um clique (Slide 5 & 6)</p>
+        </div>
+        <button onclick="openModal('modal-generate-pdf')" class="py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs flex items-center gap-2 transition-all shadow-md shadow-purple-600/30">
+          <i data-lucide="file-plus" class="w-4 h-4"></i>
+          <span>Novo Relatório PDF</span>
+        </button>
+      </div>
+
+      <!-- Feature preview banner -->
+      <div class="bg-gradient-to-r from-[#141A2E] via-[#1B1838] to-[#121626] border border-purple-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="space-y-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">Recurso White-Label</span>
+          <h3 class="text-lg font-bold text-white">Seus relatórios com a marca da sua agência</h3>
+          <p class="text-xs text-slate-400 max-w-xl leading-relaxed">
+            O TecMarketing sintetiza automaticamente CTR, CPC, CPM, ROAS, comparativos e diagnóstico em linguagem clara para apresentar diretamente ao cliente final.
+          </p>
+        </div>
+        <button onclick="generateSampleDirectPDF()" class="py-3 px-5 rounded-xl bg-white text-slate-950 hover:bg-slate-200 font-bold text-xs flex items-center gap-2 transition-all shadow-lg flex-shrink-0">
+          <i data-lucide="download" class="w-4 h-4 text-purple-600"></i>
+          <span>Baixar Relatório Modelo (PDF)</span>
+        </button>
+      </div>
+
+      <!-- History of Reports -->
+      <div class="bg-[#111625] border border-[#1E2640] rounded-2xl p-6">
+        <h4 class="text-sm font-bold text-white mb-4">Histórico de relatórios emitidos</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-[#1E2640] text-slate-400 uppercase text-[10px] tracking-wider">
+                <th class="py-3 px-3">Título do Relatório</th>
+                <th class="py-3 px-3">Cliente</th>
+                <th class="py-3 px-3">Período</th>
+                <th class="py-3 px-3">Data de Emissão</th>
+                <th class="py-3 px-3">Agência Emissora</th>
+                <th class="py-3 px-3 text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="reports-history-tbody" class="divide-y divide-[#182035] text-slate-300">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: IA INSIGHTS VIEW ==================== -->
+    <section id="view-ai-insights" class="view-panel hidden p-8 space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            Central de Inteligência Artificial <span class="text-purple-400">✨</span>
+          </h2>
+          <p class="text-xs text-slate-400">Análise cognitiva dos 4 indicadores técnicos (CTR, CPC, CPM, ROAS)</p>
+        </div>
+        <button onclick="regenerateAIInsights()" class="py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs flex items-center gap-2 transition-all">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Executar Auditoria IA Agora</span>
+        </button>
+      </div>
+
+      <!-- AI Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-[#111625] border border-purple-500/30 rounded-2xl p-5 glow-purple">
+          <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center mb-3">
+            <i data-lucide="trending-up" class="w-5 h-5"></i>
+          </div>
+          <h4 class="text-sm font-bold text-white">Score de Eficiência</h4>
+          <div class="flex items-baseline gap-2 mt-2">
+            <span class="text-3xl font-extrabold text-emerald-400">89/100</span>
+            <span class="text-xs text-emerald-400 font-semibold">Alto Desempenho</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-2">O conjunto de anúncios está acima de 85% dos benchmarks de agências do mesmo porte.</p>
+        </div>
+
+        <div class="bg-[#111625] border border-cyan-500/30 rounded-2xl p-5 glow-cyan">
+          <div class="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-300 flex items-center justify-center mb-3">
+            <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+          </div>
+          <h4 class="text-sm font-bold text-white">Projeção de Escala</h4>
+          <div class="flex items-baseline gap-2 mt-2">
+            <span class="text-3xl font-extrabold text-cyan-300">+R$ 15.400</span>
+            <span class="text-xs text-slate-400">em faturamento</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-2">Ao reinvestir 15% do lucro em Meta Ads, a previsão de ROAS permanece estável acima de 3.20x.</p>
+        </div>
+
+        <div class="bg-[#111625] border border-amber-500/30 rounded-2xl p-5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center mb-3">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+          <h4 class="text-sm font-bold text-white">Alerta de Fadiga de Criativo</h4>
+          <div class="flex items-baseline gap-2 mt-2">
+            <span class="text-3xl font-extrabold text-amber-300">1 Campanha</span>
+            <span class="text-xs text-amber-400 font-semibold">Pausada</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-2">Reconhecimento - Marca necessita de novos ângulos de copywriting para recuperar CTR.</p>
+        </div>
+      </div>
+
+      <!-- AI Chat Assistant for Marketing -->
+      <div class="bg-[#111625] border border-[#1E2640] rounded-2xl p-6">
+        <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="messages-square" class="w-5 h-5 text-purple-400"></i>
+          <span>Assistente Estratégico de Marketing TecMarketing</span>
+        </h3>
+        <p class="text-xs text-slate-400 mb-4">Tire dúvidas sobre métricas ou peça recomendações sobre suas campanhas ativas.</p>
+        
+        <div id="ai-chat-box" class="h-56 overflow-y-auto bg-[#0A0E18] border border-[#1E2640] rounded-xl p-4 space-y-3 mb-4 text-xs">
+          <div class="flex items-start gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-white flex-shrink-0 font-bold text-[10px]">IA</div>
+            <div class="bg-[#161D31] p-3 rounded-2xl rounded-tl-sm text-slate-200 max-w-lg leading-relaxed">
+              Olá, Gabriel e Allan! Analisei suas campanhas ativas. Seu CTR de 5,21% e ROAS de 3,85x mostram excelente tração. Em que posso ajudar você a otimizar hoje?
+            </div>
+          </div>
+        </div>
+
+        <form onsubmit="sendAIChat(event)" class="flex gap-3">
+          <input type="text" id="ai-chat-input" placeholder="Ex: Como melhorar o CPC do Google Ads ou como explicar o ROAS para o cliente?" class="flex-1 bg-[#0A0E18] text-xs text-white px-4 py-3 rounded-xl border border-[#1E2640] focus:outline-none focus:border-purple-500">
+          <button type="submit" class="py-3 px-5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs flex items-center gap-2 transition-all">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Perguntar</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: CLIENTES VIEW ==================== -->
+    <section id="view-clients" class="view-panel hidden p-8 space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-bold text-white">Carteira de Clientes</h2>
+          <p class="text-xs text-slate-400">Controle de acessos e contas de anúncios por agência (Slide 6 & 8)</p>
+        </div>
+        <button onclick="openModal('modal-new-client')" class="py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs flex items-center gap-2 transition-all shadow-md shadow-purple-600/30">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>Cadastrar Novo Cliente</span>
+        </button>
+      </div>
+
+      <div id="clients-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dynamically rendered client cards -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 6: INTEGRAÇÕES VIEW ==================== -->
+    <section id="view-integrations" class="view-panel hidden p-8 space-y-6">
+      <div>
+        <h2 class="text-xl font-bold text-white">Integrações de Plataformas</h2>
+        <p class="text-xs text-slate-400">Conecte fontes de tráfego pago para importação automática ou via CSV (Slide 9)</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Meta Ads -->
+        <div class="bg-[#111625] border border-[#1D2640] rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-[#0081FB]/10 border border-[#0081FB]/30 flex items-center justify-center text-[#0081FB]">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z"/></svg>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Ativo via CSV</span>
+            </div>
+            <h4 class="text-base font-bold text-white">Meta Ads</h4>
+            <p class="text-xs text-slate-400 mt-1">Facebook & Instagram Ads. Importação por planilha CSV ou manual no MVP.</p>
+          </div>
+          <button onclick="openModal('modal-import-csv')" class="mt-6 w-full py-2.5 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600 border border-purple-500/30 text-purple-200 hover:text-white text-xs font-semibold transition-all">
+            Importar Métricas Meta
+          </button>
+        </div>
+
+        <!-- Google Ads -->
+        <div class="bg-[#111625] border border-[#1D2640] rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-[#EA4335]/10 border border-[#EA4335]/30 flex items-center justify-center text-[#EA4335]">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/></svg>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Ativo via CSV</span>
+            </div>
+            <h4 class="text-base font-bold text-white">Google Ads</h4>
+            <p class="text-xs text-slate-400 mt-1">Rede de Pesquisa, Performance Max e YouTube Ads.</p>
+          </div>
+          <button onclick="openModal('modal-import-csv')" class="mt-6 w-full py-2.5 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600 border border-purple-500/30 text-purple-200 hover:text-white text-xs font-semibold transition-all">
+            Importar Métricas Google
+          </button>
+        </div>
+
+        <!-- Meta Ads & Google Ads API Direta (Roadmap Slide 9) -->
+        <div class="bg-[#111625] border border-[#1D2640] rounded-2xl p-6 flex flex-col justify-between opacity-80">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                <i data-lucide="cpu" class="w-6 h-6"></i>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">Roadmap MVP 2.0</span>
+            </div>
+            <h4 class="text-base font-bold text-white">API Direta Meta & Google</h4>
+            <p class="text-xs text-slate-400 mt-1">Sincronização automática em tempo real sem arquivos intermediários (previsto no Slide 9).</p>
+          </div>
+          <button disabled class="mt-6 w-full py-2.5 px-3 rounded-xl bg-[#161D31] text-slate-500 text-xs font-semibold cursor-not-allowed">
+            Disponível após validação
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 7: CONFIGURAÇÕES VIEW ==================== -->
+    <section id="view-settings" class="view-panel hidden p-8 space-y-6">
+      <div>
+        <h2 class="text-xl font-bold text-white">Configurações & Conformidade LGPD</h2>
+        <p class="text-xs text-slate-400">Gerencie os dados da sua agência e proteções de privacidade (Slide 8)</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Agency Profile Form -->
+        <div class="bg-[#111625] border border-[#1E2640] rounded-2xl p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white">Dados da Agência (White-Label)</h3>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Nome da Agência</label>
+            <input type="text" id="setting-agency-name" value="Agência Alpha Digital" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Responsável Técnico</label>
+            <input type="text" id="setting-user-name" value="Gabriel Lucas & Allan Victor" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">E-mail de Contato</label>
+            <input type="email" id="setting-user-email" value="contato@alphadigital.com.br" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+          </div>
+          <button onclick="saveAgencySettings()" class="py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs transition-all">
+            Salvar Alterações
+          </button>
+        </div>
+
+        <!-- LGPD & Security (Slide 8) -->
+        <div class="bg-[#111625] border border-[#1E2640] rounded-2xl p-6 space-y-4">
+          <div class="flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
+            <h3 class="text-sm font-bold text-white">Segurança e LGPD (Slide 8)</h3>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Conforme definido na proposta, "Segurança não é recurso extra: é requisito do produto". Cada agência possui isolamento estrito de seus dados de campanhas e clientes.
+          </p>
+          <div class="pt-2 space-y-3">
+            <button onclick="downloadAllAgencyData()" class="w-full py-2.5 px-4 rounded-xl bg-[#151B2E] hover:bg-[#1A223B] border border-[#222C4A] text-slate-200 text-xs font-medium flex items-center justify-between transition-all">
+              <span>Exportar todos os dados da agência (JSON/CSV)</span>
+              <i data-lucide="download" class="w-4 h-4 text-purple-400"></i>
+            </button>
+            <button onclick="clearAllDataDemo()" class="w-full py-2.5 px-4 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-300 text-xs font-medium flex items-center justify-between transition-all">
+              <span>Restaurar dados padrão de demonstração</span>
+              <i data-lucide="rotate-ccw" class="w-4 h-4 text-red-400"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 8: PITCH & SLIDES VIEW (Gabriel & Allan) ==================== -->
+    <section id="view-pitch" class="view-panel hidden p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1E2640]">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+            Apresentação de 5 Minutos
+          </span>
+          <h2 class="text-2xl font-bold text-white mt-1">Roteiro dos 11 Slides — Gabriel & Allan</h2>
+          <p class="text-xs text-slate-400">Cronômetro de fala, palavras-chave para memorizar e visualização dos slides</p>
+        </div>
+
+        <!-- Pitch Stopwatch -->
+        <div class="flex items-center gap-3 bg-[#111625] border border-[#1E2640] rounded-2xl px-5 py-3">
+          <div class="flex flex-col text-right">
+            <span class="text-[10px] text-slate-400 uppercase font-semibold">Tempo da Fala</span>
+            <span id="pitch-timer-display" class="text-xl font-mono font-bold text-emerald-400">00:00</span>
+          </div>
+          <button id="btn-timer-toggle" onclick="togglePitchTimer()" class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-all">
+            <i data-lucide="play" id="timer-icon" class="w-5 h-5"></i>
+          </button>
+          <button onclick="resetPitchTimer()" class="w-10 h-10 rounded-xl bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-all">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Slide Navigation Carousel -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Thumbnails / Selector (4 cols) -->
+        <div class="lg:col-span-4 space-y-2 max-h-[700px] overflow-y-auto pr-2" id="slides-index-list">
+          <!-- Dynamically filled with the 11 slides + slide 12 -->
+        </div>
+
+        <!-- Right: Current Slide Details & Speech (8 cols) -->
+        <div class="lg:col-span-8 bg-[#111625] border border-[#1E2640] rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-4 border-b border-[#1E2640]">
+              <div class="flex items-center gap-3">
+                <span id="active-slide-number" class="w-8 h-8 rounded-xl bg-purple-600 text-white font-bold flex items-center justify-center text-sm">1</span>
+                <div>
+                  <h3 id="active-slide-title" class="text-lg font-bold text-white">Introdução</h3>
+                  <div class="flex items-center gap-2 text-xs mt-0.5">
+                    <span id="active-slide-speaker" class="text-purple-300 font-semibold">Gabriel</span>
+                    <span class="text-slate-600">•</span>
+                    <span id="active-slide-time" class="text-slate-400">Tempo estimado: 20s</span>
+                    <span class="text-slate-600">•</span>
+                    <span id="active-slide-keyword" class="text-emerald-400 font-mono">Micro-SaaS</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="navigateSlide(-1)" class="p-2 rounded-xl bg-[#182035] text-slate-300 hover:text-white transition-all">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <button onclick="navigateSlide(1)" class="p-2 rounded-xl bg-[#182035] text-slate-300 hover:text-white transition-all">
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Slide Image Preview -->
+            <div class="mt-4 rounded-xl overflow-hidden border border-[#202947] bg-[#0A0E18] flex items-center justify-center max-h-[340px]">
+              <img id="active-slide-image" src="slides_img/slide_01.png" alt="Slide Preview" class="w-full object-contain max-h-[340px]">
+            </div>
+
+            <!-- Speech Script for presenter -->
+            <div class="mt-4 p-4 rounded-xl bg-[#141A2D] border border-purple-500/20">
+              <span class="text-[10px] uppercase font-bold text-purple-400 tracking-wider block mb-1">Roteiro de Fala Sugerido</span>
+              <p id="active-slide-speech" class="text-sm text-slate-100 leading-relaxed font-normal">
+                "O TecMarketing é uma proposta de Micro-SaaS, ou seja, um software oferecido como serviço por assinatura. Nosso objetivo é ajudar pequenas agências e profissionais de marketing a organizar dados de campanhas e gerar relatórios de maneira prática."
+              </p>
+            </div>
+          </div>
+
+          <!-- Presenter Tips -->
+          <div class="mt-4 pt-3 border-t border-[#1E2640] flex items-center justify-between text-xs text-slate-400">
+            <span class="text-[11px] text-amber-300/90 italic">
+              💡 Dica: use "pretendemos implementar" e "o sistema permite" para manter tom de MVP.
+            </span>
+            <button onclick="switchTab('dashboard')" class="text-purple-400 hover:underline text-xs font-semibold">
+              Ver Dashboard Funcional →
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- MODAL: NOVA CAMPANHA -->
+  <div id="modal-new-campaign" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#111625] border border-[#1E2640] rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-[#1E2640]">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-purple-600/20 border border-purple-500/40 text-purple-300 flex items-center justify-center">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-base font-bold text-white">Adicionar Nova Campanha</h3>
+        </div>
+        <button onclick="closeModal('modal-new-campaign')" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleCreateCampaign(event)" class="mt-4 space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Nome da Campanha *</label>
+          <input type="text" id="nc-name" required placeholder="Ex: Lançamento Coleção Outono" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640] focus:border-purple-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Cliente *</label>
+            <select id="nc-client" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640] focus:border-purple-500">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Plataforma *</label>
+            <select id="nc-platform" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640] focus:border-purple-500">
+              <option value="Meta Ads">Meta Ads</option>
+              <option value="Google Ads">Google Ads</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Raw Numbers Inputs with live auto-calc of CTR, CPC, CPM, ROAS -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Impressões *</label>
+            <input type="number" id="nc-impressions" required oninput="calcIndicatorsLive()" placeholder="150000" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Cliques *</label>
+            <input type="number" id="nc-clicks" required oninput="calcIndicatorsLive()" placeholder="7500" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Investimento R$ *</label>
+            <input type="number" step="0.01" id="nc-investment" required oninput="calcIndicatorsLive()" placeholder="5000.00" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Receita Gerada R$ *</label>
+            <input type="number" step="0.01" id="nc-revenue" required oninput="calcIndicatorsLive()" placeholder="18500.00" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+          </div>
+        </div>
+
+        <!-- Live Indicators Preview (Slide 4) -->
+        <div class="p-3 bg-[#0A0E18] border border-purple-500/30 rounded-xl">
+          <span class="text-[10px] font-bold uppercase text-purple-400 block mb-2">Cálculo Automático dos Indicadores (Slide 4):</span>
+          <div class="grid grid-cols-4 gap-2 text-center text-xs">
+            <div class="bg-[#151C30] p-2 rounded-lg">
+              <span class="text-[10px] text-slate-400 block">CTR</span>
+              <span id="live-ctr" class="font-bold text-purple-300">0.00%</span>
+            </div>
+            <div class="bg-[#151C30] p-2 rounded-lg">
+              <span class="text-[10px] text-slate-400 block">CPC</span>
+              <span id="live-cpc" class="font-bold text-cyan-300">R$ 0,00</span>
+            </div>
+            <div class="bg-[#151C30] p-2 rounded-lg">
+              <span class="text-[10px] text-slate-400 block">CPM</span>
+              <span id="live-cpm" class="font-bold text-slate-300">R$ 0,00</span>
+            </div>
+            <div class="bg-[#151C30] p-2 rounded-lg">
+              <span class="text-[10px] text-slate-400 block">ROAS</span>
+              <span id="live-roas" class="font-bold text-emerald-400">0.00x</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeModal('modal-new-campaign')" class="py-2.5 px-4 rounded-xl bg-[#182035] text-slate-300 text-xs font-semibold">Cancelar</button>
+          <button type="submit" class="py-2.5 px-5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-md shadow-purple-600/30">Salvar Campanha</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: IMPORTAR CSV -->
+  <div id="modal-import-csv" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#111625] border border-[#1E2640] rounded-2xl max-w-xl w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-[#1E2640]">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-purple-600/20 border border-purple-500/40 text-purple-300 flex items-center justify-center">
+            <i data-lucide="upload" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-base font-bold text-white">Importar Dados de Campanhas (CSV)</h3>
+        </div>
+        <button onclick="closeModal('modal-import-csv')" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-4">
+        <!-- Download Sample CSV Template -->
+        <div class="flex items-center justify-between p-3 rounded-xl bg-[#141A2D] border border-purple-500/20">
+          <div class="text-xs">
+            <span class="font-semibold text-white block">Precisa de um modelo de planilha?</span>
+            <span class="text-slate-400 text-[11px]">Baixe nosso modelo formatado com colunas de métricas.</span>
+          </div>
+          <a href="sample_campaigns.csv" download="campanhas_modelo_tecmarketing.csv" class="py-2 px-3 rounded-lg bg-purple-600/30 hover:bg-purple-600 border border-purple-500/30 text-purple-200 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Baixar CSV</span>
+          </a>
+        </div>
+
+        <!-- File Upload Zone -->
+        <div class="border-2 border-dashed border-[#232F52] hover:border-purple-500/50 rounded-2xl p-6 text-center cursor-pointer transition-colors bg-[#0A0E18]" onclick="document.getElementById('csv-file-input').click()">
+          <i data-lucide="file-spreadsheet" class="w-10 h-10 text-purple-400 mx-auto mb-2"></i>
+          <p class="text-xs font-semibold text-white">Clique para selecionar seu arquivo CSV</p>
+          <p class="text-[11px] text-slate-500 mt-1">Colunas suportadas: campanha, cliente, plataforma, impressoes, cliques, investimento, receita</p>
+          <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleFileSelect(event)">
+        </div>
+
+        <!-- Or Paste CSV Text -->
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Ou cole os dados CSV diretamente:</label>
+          <textarea id="csv-paste-area" rows="4" placeholder="campanha,cliente,plataforma,impressoes,cliques,investimento,receita&#10;Promoção Verão,Loja XYZ,Meta Ads,50000,2500,3000,12000" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640] font-mono"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeModal('modal-import-csv')" class="py-2.5 px-4 rounded-xl bg-[#182035] text-slate-300 text-xs font-semibold">Cancelar</button>
+          <button type="button" onclick="executeCSVImport()" class="py-2.5 px-5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-md shadow-purple-600/30">Processar e Importar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GERAR RELATÓRIO PDF (Slide 5) -->
+  <div id="modal-generate-pdf" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#111625] border border-[#1E2640] rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-[#1E2640]">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-purple-600/20 border border-purple-500/40 text-purple-300 flex items-center justify-center">
+            <i data-lucide="file-down" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-base font-bold text-white">Gerar Relatório Personalizado (PDF)</h3>
+        </div>
+        <button onclick="closeModal('modal-generate-pdf')" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleGeneratePDF(event)" class="mt-4 space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Nome da Agência (White-Label)</label>
+          <input type="text" id="pdf-agency-name" value="Agência Alpha Digital" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Selecionar Cliente</label>
+          <select id="pdf-client-select" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Período de Referência</label>
+          <input type="text" id="pdf-period" value="Últimos 30 dias (Novembro 2026)" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Título do Documento</label>
+          <input type="text" id="pdf-title" value="Relatório Executivo de Performance de Marketing" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+        </div>
+
+        <div class="p-3 bg-[#141A2D] border border-purple-500/20 rounded-xl text-xs text-slate-300 flex items-start gap-2">
+          <i data-lucide="info" class="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5"></i>
+          <span>O PDF incluirá automaticamente: Indicadores calculados (CTR, CPC, CPM, ROAS), tabelas detalhadas e o Parecer Sintético da IA.</span>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeModal('modal-generate-pdf')" class="py-2.5 px-4 rounded-xl bg-[#182035] text-slate-300 text-xs font-semibold">Cancelar</button>
+          <button type="submit" class="py-2.5 px-5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-md shadow-purple-600/30 flex items-center gap-2">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Baixar PDF Agora</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PLANOS & VIABILIDADE FINANCEIRA (Slide 10) -->
+  <div id="modal-plans" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#111625] border border-[#1E2640] rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-[#1E2640]">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400">Slide 10 — Viabilidade Financeira</span>
+          <h3 class="text-xl font-bold text-white mt-0.5">Modelos de Assinatura & Custos</h3>
+        </div>
+        <button onclick="closeModal('modal-plans')" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Pricing Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        <!-- Plan 1 -->
+        <div class="bg-[#0A0E18] border border-[#1E2640] rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Entrada</span>
+            <div class="mt-2 mb-3">
+              <span class="text-3xl font-extrabold text-white">R$ 49</span>
+              <span class="text-xs text-slate-400">/ mês</span>
+            </div>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Até 3 clientes</li>
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Entrada de dados manual</li>
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Relatório PDF básico</li>
+            </ul>
+          </div>
+          <button class="mt-6 w-full py-2 px-3 rounded-xl bg-[#182035] hover:bg-[#202B47] text-slate-300 text-xs font-semibold">Escolher Plano</button>
+        </div>
+
+        <!-- Plan 2: Current Active in Mockup (R$ 99) -->
+        <div class="bg-gradient-to-b from-[#181D33] to-[#121626] border-2 border-purple-500 rounded-2xl p-5 flex flex-col justify-between relative glow-purple">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-600 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-0.5 rounded-full shadow-md">
+            Plano Ativo (Mockup)
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-purple-300 uppercase tracking-wider">Intermediário</span>
+            <div class="mt-2 mb-3">
+              <span class="text-3xl font-extrabold text-white">R$ 99</span>
+              <span class="text-xs text-slate-400">/ mês</span>
+            </div>
+            <ul class="text-xs text-slate-200 space-y-2">
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Até 15 clientes</li>
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Importação CSV em lote</li>
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> IA Insights ✨ integrados</li>
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Relatórios PDF White-Label</li>
+            </ul>
+          </div>
+          <button class="mt-6 w-full py-2 px-3 rounded-xl bg-purple-600 text-white text-xs font-bold shadow-md shadow-purple-600/30">Plano Atual</button>
+        </div>
+
+        <!-- Plan 3: Avançado (R$ 199) -->
+        <div class="bg-[#0A0E18] border border-[#1E2640] rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Avançado</span>
+            <div class="mt-2 mb-3">
+              <span class="text-3xl font-extrabold text-white">R$ 199</span>
+              <span class="text-xs text-slate-400">/ mês</span>
+            </div>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Clientes ilimitados</li>
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Múltiplos usuários por agência</li>
+              <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Integração direta API (Ads)</li>
+            </ul>
+          </div>
+          <button class="mt-6 w-full py-2 px-3 rounded-xl bg-[#182035] hover:bg-[#202B47] text-slate-300 text-xs font-semibold">Fazer Upgrade</button>
+        </div>
+      </div>
+
+      <!-- Cost estimate footer from Slide 10 -->
+      <div class="mt-6 p-4 rounded-xl bg-[#0A0E18] border border-[#1E2640] text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div>
+          <span class="font-bold text-white block">Estimativa de Investimento Inicial:</span>
+          <span>Desenvolvimento próprio: R$ 500 – 3.000 | Freelancer: R$ 12.500 – 30.000</span>
+        </div>
+        <span class="text-[11px] text-amber-400 italic">Hipótese inicial em validação</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: NOVO CLIENTE -->
+  <div id="modal-new-client" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#111625] border border-[#1E2640] rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-[#1E2640]">
+        <h3 class="text-base font-bold text-white">Cadastrar Novo Cliente</h3>
+        <button onclick="closeModal('modal-new-client')" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleCreateClient(event)" class="mt-4 space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Nome da Empresa / Cliente *</label>
+          <input type="text" id="client-name" required placeholder="Ex: Farmácia São Lucas" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Segmento de Mercado</label>
+          <input type="text" id="client-segment" placeholder="Ex: Varejo Farmacêutico" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">E-mail de Contato</label>
+          <input type="email" id="client-email" placeholder="contato@farmaciasaolucas.com.br" class="w-full bg-[#0A0E18] text-xs text-white p-3 rounded-xl border border-[#1E2640]">
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeModal('modal-new-client')" class="py-2 px-4 rounded-xl bg-[#182035] text-slate-300 text-xs font-semibold">Cancelar</button>
+          <button type="submit" class="py-2 px-5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs">Salvar Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Application Logic Scripts -->
+  <script src="static/js/app.js"></script>
+</body>
+</html>

@@ -1,5 +1,37 @@
-// TecMarketing — Core Frontend Application Logic
+// TecMarketing — Standalone & Hybrid Frontend Application Logic
 // Inspired by Slide 12 mockup & Pitch deck specifications (Gabriel & Allan)
+// Compatible with both Local Flask Server and Static Netlify Hosting
+
+const DEFAULT_CLIENTS = [
+  { id: 1, name: 'Loja Virtual Express', segment: 'E-commerce', contact_email: 'contato@expressloja.com.br', total_campaigns: 2, total_spend: 25457.13 },
+  { id: 2, name: 'TechStore Pro', segment: 'Tecnologia & Gadgets', contact_email: 'marketing@techstorepro.com.br', total_campaigns: 2, total_spend: 13693.75 },
+  { id: 3, name: 'Clínica DentalMais', segment: 'Saúde & Odontologia', contact_email: 'dr.carlos@dentalmais.com.br', total_campaigns: 1, total_spend: 4855.20 },
+  { id: 4, name: 'Consultoria Silva & Filhos', segment: 'B2B & Negócios', contact_email: 'atendimento@consultoriasilva.com.br', total_campaigns: 1, total_spend: 2410.00 },
+  { id: 5, name: 'AutoPeças Silva', segment: 'Automotivo', contact_email: 'vendas@autopecassilva.com.br', total_campaigns: 1, total_spend: 2148.00 }
+];
+
+const DEFAULT_CAMPAIGNS = [
+  { id: 1, client_id: 1, client_name: 'Loja Virtual Express', name: 'Lançamento - Produto X', platform: 'Meta Ads', impressions: 154200, clicks: 8034, investment: 10604.88, revenue: 40828.78, ctr: 5.21, cpc: 1.32, cpm: 26.40, roas: 3.85, status: 'Ativa' },
+  { id: 2, client_id: 2, client_name: 'TechStore Pro', name: 'Vendas - Site', platform: 'Google Ads', impressions: 89400, clicks: 4255, investment: 6297.40, revenue: 20151.68, ctr: 4.76, cpc: 1.48, cpm: 29.80, roas: 3.20, status: 'Ativa' },
+  { id: 3, client_id: 3, client_name: 'Clínica DentalMais', name: 'Reconhecimento - Marca', platform: 'Meta Ads', impressions: 72500, clicks: 2856, investment: 4855.20, revenue: 10244.47, ctr: 3.94, cpc: 1.70, cpm: 24.10, roas: 2.11, status: 'Pausada' },
+  { id: 4, client_id: 1, client_name: 'Loja Virtual Express', name: 'Black Friday Antecipada', platform: 'Meta Ads', impressions: 210000, clicks: 12915, investment: 14852.25, revenue: 68320.35, ctr: 6.15, cpc: 1.15, cpm: 32.50, roas: 4.60, status: 'Ativa' },
+  { id: 5, client_id: 2, client_name: 'TechStore Pro', name: 'Tráfego Fundo de Funil', platform: 'Google Ads', impressions: 65400, clicks: 3793, investment: 7396.35, revenue: 28845.76, ctr: 5.80, cpc: 1.95, cpm: 35.00, roas: 3.90, status: 'Ativa' }
+];
+
+const DEFAULT_SLIDES = [
+  { num: 1, title: 'Introdução', speaker: 'Gabriel', time: '20s', keyword: 'Micro-SaaS', image: 'slides_img/slide_01.png', speech: 'O TecMarketing é uma proposta de Micro-SaaS, ou seja, um software oferecido como serviço por assinatura. Nosso objetivo é ajudar pequenas agências e profissionais de marketing a organizar dados de campanhas e gerar relatórios de maneira prática.' },
+  { num: 2, title: 'Problema e justificativa', speaker: 'Gabriel', time: '25s', keyword: 'Problema', image: 'slides_img/slide_02.png', speech: 'Atualmente, profissionais de marketing precisam lidar com grandes quantidades de informações de diferentes plataformas. Organizar esses dados manualmente pode consumir muito tempo. Nossa proposta é automatizar parte desse processo, aumentando a produtividade.' },
+  { num: 3, title: 'Público-alvo', speaker: 'Gabriel', time: '20s', keyword: 'Público-alvo', image: 'slides_img/slide_03.png', speech: 'Nosso público-alvo são pequenas agências de marketing, gestores de tráfego, social medias e consultores. Esses profissionais precisam acompanhar campanhas e apresentar resultados aos clientes de forma clara.' },
+  { num: 4, title: 'Indicadores técnicos', speaker: 'Gabriel', time: '40s', keyword: 'Indicadores', image: 'slides_img/slide_04.png', speech: 'O TecMarketing trabalha com quatro indicadores principais: CTR (taxa de cliques em relação às impressões), CPC (custo médio por clique), CPM (custo por mil impressões) e ROAS (receita atribuída aos anúncios dividida pelo investimento). Esses indicadores ajudam a avaliar o desempenho das campanhas e identificar oportunidades de melhoria.' },
+  { num: 5, title: 'Funcionamento', speaker: 'Gabriel', time: '30s', keyword: 'Funcionamento', image: 'slides_img/slide_05.png', speech: 'O sistema funciona em três etapas: primeiro, o usuário insere os dados manualmente ou por arquivos CSV. Depois, o sistema calcula os indicadores e apresenta os resultados em um dashboard, com gráficos e informações organizadas. Por último, gera relatórios personalizados em PDF.\n\nTransição: Agora o Allan vai explicar como pretendemos desenvolver essa aplicação.' },
+  { num: 6, title: 'Requisitos funcionais', speaker: 'Allan', time: '30s', keyword: 'Funcionalidades', image: 'slides_img/slide_06.png', speech: 'Os requisitos funcionais representam aquilo que o sistema deverá fazer. Entre eles estão cadastro e login, gerenciamento de clientes, importação de dados, cálculo de indicadores, dashboards e geração de relatórios. Também propomos inteligência artificial para resumir os resultados e um histórico de relatórios.' },
+  { num: 7, title: 'Tecnologias propostas', speaker: 'Allan', time: '30s', keyword: 'Tecnologias', image: 'slides_img/slide_07.png', speech: 'Para desenvolver o TecMarketing, consideramos utilizar Next.js e TypeScript na aplicação web, Supabase e PostgreSQL para autenticação e armazenamento de dados, além de bibliotecas para gráficos e relatórios em PDF. Uma API de inteligência artificial poderá auxiliar na interpretação dos resultados.' },
+  { num: 8, title: 'Requisitos não funcionais', speaker: 'Allan', time: '25s', keyword: 'Segurança e LGPD', image: 'slides_img/slide_08.png', speech: 'Os requisitos não funcionais definem a qualidade e a segurança do sistema. Nossa proposta inclui uma interface responsiva, validação dos dados, desempenho adequado e controle de acesso para que cada agência visualize apenas suas próprias informações, considerando também a LGPD.' },
+  { num: 9, title: 'MVP e melhorias futuras', speaker: 'Allan', time: '30s', keyword: 'MVP', image: 'slides_img/slide_09.png', speech: 'O MVP será a primeira versão funcional da aplicação, contendo os recursos essenciais, como login, gerenciamento de clientes, entrada de dados, dashboard e geração de relatórios. Futuramente, pretendemos implementar integração automática com Google Ads e Meta Ads, além de novas funcionalidades com inteligência artificial.' },
+  { num: 10, title: 'Viabilidade financeira', speaker: 'Allan', time: '30s', keyword: 'Custos e assinaturas', image: 'slides_img/slide_10.png', speech: 'Nosso modelo de negócio será baseado em assinaturas mensais, com valores inicialmente propostos de R$ 49, R$ 99 e R$ 199. Estimamos um investimento inicial de R$ 500 a R$ 3.000 em desembolsos para desenvolvimento próprio, ou de R$ 12.500 a R$ 30.000 com freelancer. Esses valores ainda precisam ser validados.' },
+  { num: 11, title: 'Conclusão', speaker: 'Gabriel', time: '25s', keyword: 'Conclusão', image: 'slides_img/slide_11.png', speech: 'Concluindo, o TecMarketing pretende unir tecnologia e marketing para simplificar a análise de campanhas e reduzir tarefas repetitivas. Nosso objetivo não é substituir o profissional, mas oferecer uma ferramenta que facilite seu trabalho, permitindo que ele dedique mais tempo à criação e à estratégia. O próximo passo será validar o MVP com usuários reais e avaliar sua viabilidade no mercado.' },
+  { num: 12, title: 'Mockup do Produto - Dashboard MVP', speaker: 'Gabriel & Allan', time: 'Demonstração', keyword: 'Dashboard Vivo', image: 'slides_img/slide_12.png', speech: 'Esta é a visão do produto finalizado e funcional do TecMarketing, com métricas em tempo real (CTR, CPC, CPM, ROAS), gráficos dinâmicos de desempenho, Insights gerados por IA, gestão de campanhas do Meta e Google Ads e geração de relatórios em PDF com marca própria.' }
+];
 
 let state = {
   activeTab: 'dashboard',
@@ -13,7 +45,7 @@ let state = {
   campaigns: [],
   clients: [],
   reports: [],
-  slides: [],
+  slides: DEFAULT_SLIDES,
   activeSlideIndex: 0,
   pitchTimer: {
     seconds: 0,
@@ -23,36 +55,58 @@ let state = {
   chartInstance: null
 };
 
+// Check if running on backend or static host
+const isStaticHost = window.location.protocol === 'file:' || window.location.hostname.includes('netlify.app') || window.location.hostname.includes('github.io');
+
 // Document Ready
 document.addEventListener('DOMContentLoaded', async () => {
   if (window.lucide) {
     lucide.createIcons();
   }
+  await initStorage();
   await loadClients();
-  await loadKPIs();
   await loadCampaigns();
+  await loadKPIs();
   await loadChartData();
   await loadReports();
   await loadSlides();
   setupEventListeners();
 });
 
+// Initialize localStorage if needed
+async function initStorage() {
+  if (!localStorage.getItem('tec_campaigns')) {
+    localStorage.setItem('tec_campaigns', JSON.stringify(DEFAULT_CAMPAIGNS));
+  }
+  if (!localStorage.getItem('tec_clients')) {
+    localStorage.setItem('tec_clients', JSON.stringify(DEFAULT_CLIENTS));
+  }
+  if (!localStorage.getItem('tec_reports')) {
+    const initialReport = [{
+      id: 1,
+      title: 'Relatório Mensal de Performance - Q4',
+      client_name: 'Loja Virtual Express',
+      period: 'Últimos 30 dias',
+      created_at: new Date().toISOString(),
+      agency_name: 'Agência Alpha Digital'
+    }];
+    localStorage.setItem('tec_reports', JSON.stringify(initialReport));
+  }
+}
+
 // ----------------- NAVIGATION & TABS -----------------
 function switchTab(tabName) {
   state.activeTab = tabName;
 
-  // Hide all panels
   document.querySelectorAll('.view-panel').forEach(panel => {
     panel.classList.add('hidden');
   });
 
-  // Show target panel
   const target = document.getElementById(`view-${tabName}`);
   if (target) {
     target.classList.remove('hidden');
   }
 
-  // Update navigation button active styles
   document.querySelectorAll('.nav-item').forEach(btn => {
     btn.classList.remove('bg-purple-600', 'text-white', 'shadow-lg', 'shadow-purple-600/30');
     btn.classList.add('text-slate-400');
@@ -64,7 +118,6 @@ function switchTab(tabName) {
     activeBtn.classList.add('bg-purple-600', 'text-white', 'shadow-lg', 'shadow-purple-600/30');
   }
 
-  // Update header text
   const titleEl = document.getElementById('page-header-title');
   const subtitleEl = document.getElementById('page-header-subtitle');
 
@@ -110,89 +163,102 @@ function switchTab(tabName) {
 // ----------------- DATA LOADING -----------------
 async function loadClients() {
   try {
-    const res = await fetch('/api/clients');
-    state.clients = await res.json();
-    
-    // Populate header dropdown
-    const select = document.getElementById('filter-client');
-    const newCampClient = document.getElementById('nc-client');
-    const pdfClient = document.getElementById('pdf-client-select');
-
-    if (select) {
-      select.innerHTML = '<option value="all">🏢 Todos os clientes</option>';
-      state.clients.forEach(c => {
-        select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-      });
-    }
-
-    if (newCampClient) {
-      newCampClient.innerHTML = '';
-      state.clients.forEach(c => {
-        newCampClient.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-      });
-    }
-
-    if (pdfClient) {
-      pdfClient.innerHTML = '<option value="all">Consolidado (Todos os Clientes)</option>';
-      state.clients.forEach(c => {
-        pdfClient.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-      });
-    }
-
-    renderClientsGrid();
-  } catch (err) {
-    console.error('Error loading clients:', err);
-  }
-}
-
-async function loadKPIs() {
-  try {
-    const url = `/api/kpis?client_id=${state.selectedClient}&period=${state.selectedPeriod}`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    // Update KPI Card values
-    const ctrEl = document.getElementById('kpi-ctr-value');
-    const cpcEl = document.getElementById('kpi-cpc-value');
-    const cpmEl = document.getElementById('kpi-cpm-value');
-    const roasEl = document.getElementById('kpi-roas-value');
-
-    if (ctrEl) ctrEl.innerText = `${data.ctr.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}%`;
-    if (cpcEl) cpcEl.innerText = `R$ ${data.cpc.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    if (cpmEl) cpmEl.innerText = `R$ ${data.cpm.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    if (roasEl) roasEl.innerText = `${data.roas.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}x`;
-
-    // Update trends if available
-    if (data.trends) {
-      const ctrTrend = document.getElementById('kpi-ctr-trend');
-      const cpcTrend = document.getElementById('kpi-cpc-trend');
-      const cpmTrend = document.getElementById('kpi-cpm-trend');
-      const roasTrend = document.getElementById('kpi-roas-trend');
-
-      if (ctrTrend) ctrTrend.innerText = data.trends.ctr;
-      if (cpcTrend) cpcTrend.innerText = data.trends.cpc;
-      if (cpmTrend) cpmTrend.innerText = data.trends.cpm;
-      if (roasTrend) roasTrend.innerText = data.trends.roas;
+    if (!isStaticHost) {
+      const res = await fetch('/api/clients');
+      if (res.ok) {
+        state.clients = await res.json();
+      } else {
+        throw new Error('API unavailable');
+      }
+    } else {
+      state.clients = JSON.parse(localStorage.getItem('tec_clients')) || DEFAULT_CLIENTS;
     }
   } catch (err) {
-    console.error('Error loading KPIs:', err);
+    state.clients = JSON.parse(localStorage.getItem('tec_clients')) || DEFAULT_CLIENTS;
   }
+
+  const select = document.getElementById('filter-client');
+  const newCampClient = document.getElementById('nc-client');
+  const pdfClient = document.getElementById('pdf-client-select');
+
+  if (select) {
+    select.innerHTML = '<option value="all">🏢 Todos os clientes</option>';
+    state.clients.forEach(c => {
+      select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+  }
+
+  if (newCampClient) {
+    newCampClient.innerHTML = '';
+    state.clients.forEach(c => {
+      newCampClient.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+  }
+
+  if (pdfClient) {
+    pdfClient.innerHTML = '<option value="all">Consolidado (Todos os Clientes)</option>';
+    state.clients.forEach(c => {
+      pdfClient.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+  }
+
+  renderClientsGrid();
 }
 
 async function loadCampaigns() {
   try {
-    const url = `/api/campaigns?client_id=${state.selectedClient}`;
-    const res = await fetch(url);
-    state.campaigns = await res.json();
-
-    const badge = document.getElementById('badge-campaigns-count');
-    if (badge) badge.innerText = state.campaigns.length;
-
-    renderRecentCampaigns();
-    renderAllCampaigns();
+    if (!isStaticHost) {
+      const url = `/api/campaigns?client_id=${state.selectedClient}`;
+      const res = await fetch(url);
+      if (res.ok) {
+        state.campaigns = await res.json();
+      } else {
+        throw new Error('API unavailable');
+      }
+    } else {
+      const stored = JSON.parse(localStorage.getItem('tec_campaigns')) || DEFAULT_CAMPAIGNS;
+      if (state.selectedClient !== 'all') {
+        state.campaigns = stored.filter(c => c.client_id == state.selectedClient);
+      } else {
+        state.campaigns = stored;
+      }
+    }
   } catch (err) {
-    console.error('Error loading campaigns:', err);
+    const stored = JSON.parse(localStorage.getItem('tec_campaigns')) || DEFAULT_CAMPAIGNS;
+    state.campaigns = state.selectedClient !== 'all' ? stored.filter(c => c.client_id == state.selectedClient) : stored;
   }
+
+  const badge = document.getElementById('badge-campaigns-count');
+  if (badge) badge.innerText = state.campaigns.length;
+
+  renderRecentCampaigns();
+  renderAllCampaigns();
+}
+
+async function loadKPIs() {
+  let ctr = 5.21, cpc = 1.32, cpm = 26.40, roas = 3.85;
+
+  if (state.campaigns && state.campaigns.length > 0) {
+    const totImp = state.campaigns.reduce((acc, c) => acc + (c.impressions || 0), 0);
+    const totClk = state.campaigns.reduce((acc, c) => acc + (c.clicks || 0), 0);
+    const totInv = state.campaigns.reduce((acc, c) => acc + (c.investment || 0), 0);
+    const totRev = state.campaigns.reduce((acc, c) => acc + (c.revenue || 0), 0);
+
+    if (totImp > 0) ctr = (totClk / totImp) * 100;
+    if (totClk > 0) cpc = totInv / totClk;
+    if (totImp > 0) cpm = (totInv / totImp) * 1000;
+    if (totInv > 0) roas = totRev / totInv;
+  }
+
+  const ctrEl = document.getElementById('kpi-ctr-value');
+  const cpcEl = document.getElementById('kpi-cpc-value');
+  const cpmEl = document.getElementById('kpi-cpm-value');
+  const roasEl = document.getElementById('kpi-roas-value');
+
+  if (ctrEl) ctrEl.innerText = `${ctr.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}%`;
+  if (cpcEl) cpcEl.innerText = `R$ ${cpc.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  if (cpmEl) cpmEl.innerText = `R$ ${cpm.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  if (roasEl) roasEl.innerText = `${roas.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}x`;
 }
 
 function renderRecentCampaigns() {
@@ -204,7 +270,6 @@ function renderRecentCampaigns() {
     return;
   }
 
-  // Show top 3 or all matching slide 12
   const recent = state.campaigns.slice(0, 4);
   tbody.innerHTML = recent.map(c => {
     const isMeta = c.platform === 'Meta Ads';
@@ -220,9 +285,9 @@ function renderRecentCampaigns() {
       <tr class="hover:bg-[#141A2E]/60 transition-colors">
         <td class="py-3 px-3 font-medium text-white">${c.name}</td>
         <td class="py-3 px-3">${platformIcon}</td>
-        <td class="py-3 px-3 font-semibold text-slate-200">${c.ctr.toFixed(2)}%</td>
-        <td class="py-3 px-3 font-semibold text-slate-200">R$ ${c.cpc.toFixed(2)}</td>
-        <td class="py-3 px-3 font-bold text-emerald-400">${c.roas.toFixed(2)}x</td>
+        <td class="py-3 px-3 font-semibold text-slate-200">${Number(c.ctr).toFixed(2)}%</td>
+        <td class="py-3 px-3 font-semibold text-slate-200">R$ ${Number(c.cpc).toFixed(2)}</td>
+        <td class="py-3 px-3 font-bold text-emerald-400">${Number(c.roas).toFixed(2)}x</td>
         <td class="py-3 px-3">${statusBadge}</td>
         <td class="py-3 px-3 text-right">
           <button onclick="deleteCampaign(${c.id})" title="Excluir" class="text-slate-500 hover:text-red-400 transition-colors">
@@ -246,7 +311,6 @@ function renderAllCampaigns() {
   }
 
   tbody.innerHTML = state.campaigns.map(c => {
-    const isMeta = c.platform === 'Meta Ads';
     const statusBadge = c.status === 'Ativa'
       ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Ativa</span>`
       : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-700/50 text-slate-400 border border-slate-600/30">Pausada</span>`;
@@ -258,14 +322,14 @@ function renderAllCampaigns() {
           <span class="text-[10px] text-slate-400">${c.client_name || 'Geral'}</span>
         </td>
         <td class="py-3 px-4 font-medium text-slate-300">${c.platform}</td>
-        <td class="py-3 px-4 text-slate-300 font-mono">${c.impressions.toLocaleString('pt-BR')}</td>
-        <td class="py-3 px-4 text-slate-300 font-mono">${c.clicks.toLocaleString('pt-BR')}</td>
-        <td class="py-3 px-4 text-slate-300 font-mono">R$ ${c.investment.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-        <td class="py-3 px-4 text-slate-300 font-mono">R$ ${c.revenue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
-        <td class="py-3 px-4 font-bold text-purple-400 font-mono">${c.ctr.toFixed(2)}%</td>
-        <td class="py-3 px-4 font-bold text-cyan-400 font-mono">R$ ${c.cpc.toFixed(2)}</td>
-        <td class="py-3 px-4 font-semibold text-slate-400 font-mono">R$ ${c.cpm.toFixed(2)}</td>
-        <td class="py-3 px-4 font-bold text-emerald-400 font-mono">${c.roas.toFixed(2)}x</td>
+        <td class="py-3 px-4 text-slate-300 font-mono">${Number(c.impressions).toLocaleString('pt-BR')}</td>
+        <td class="py-3 px-4 text-slate-300 font-mono">${Number(c.clicks).toLocaleString('pt-BR')}</td>
+        <td class="py-3 px-4 text-slate-300 font-mono">R$ ${Number(c.investment).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+        <td class="py-3 px-4 text-slate-300 font-mono">R$ ${Number(c.revenue).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+        <td class="py-3 px-4 font-bold text-purple-400 font-mono">${Number(c.ctr).toFixed(2)}%</td>
+        <td class="py-3 px-4 font-bold text-cyan-400 font-mono">R$ ${Number(c.cpc).toFixed(2)}</td>
+        <td class="py-3 px-4 font-semibold text-slate-400 font-mono">R$ ${Number(c.cpm).toFixed(2)}</td>
+        <td class="py-3 px-4 font-bold text-emerald-400 font-mono">${Number(c.roas).toFixed(2)}x</td>
         <td class="py-3 px-4">${statusBadge}</td>
         <td class="py-3 px-4 text-right">
           <button onclick="deleteCampaign(${c.id})" class="text-slate-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors">
@@ -281,13 +345,10 @@ function renderAllCampaigns() {
 
 // ----------------- CHART.JS (Slide 12 Replica) -----------------
 async function loadChartData() {
-  try {
-    const res = await fetch('/api/chart-data');
-    const data = await res.json();
-    initChart(data.labels, data.impressions, data.clicks);
-  } catch (err) {
-    console.error('Error loading chart data:', err);
-  }
+  const labels = ["1 jan", "5 jan", "10 jan", "15 jan", "20 jan", "25 jan", "30 jan"];
+  const impressions = [2500, 3100, 5200, 4300, 5800, 6800, 8034];
+  const clicks = [480, 620, 1150, 980, 1340, 1620, 2010];
+  initChart(labels, impressions, clicks);
 }
 
 function initChart(labels, impressionsData, clicksData) {
@@ -298,7 +359,6 @@ function initChart(labels, impressionsData, clicksData) {
     state.chartInstance.destroy();
   }
 
-  // Create subtle gradients
   const chartCtx = ctx.getContext('2d');
   
   const cyanGradient = chartCtx.createLinearGradient(0, 0, 0, 240);
@@ -348,9 +408,7 @@ function initChart(labels, impressionsData, clicksData) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: false // Using custom HTML legend matching Slide 12
-        },
+        legend: { display: false },
         tooltip: {
           backgroundColor: '#121626',
           titleColor: '#FFFFFF',
@@ -369,32 +427,15 @@ function initChart(labels, impressionsData, clicksData) {
       },
       scales: {
         x: {
-          grid: {
-            display: false,
-            drawBorder: false
-          },
-          ticks: {
-            color: '#64748B',
-            font: {
-              size: 11,
-              family: 'Inter'
-            }
-          }
+          grid: { display: false, drawBorder: false },
+          ticks: { color: '#64748B', font: { size: 11, family: 'Inter' } }
         },
         y: {
-          grid: {
-            color: 'rgba(30, 38, 64, 0.5)',
-            drawBorder: false
-          },
+          grid: { color: 'rgba(30, 38, 64, 0.5)', drawBorder: false },
           ticks: {
             color: '#64748B',
-            font: {
-              size: 10,
-              family: 'Inter'
-            },
-            callback: function(value) {
-              return value.toLocaleString('pt-BR');
-            }
+            font: { size: 10, family: 'Inter' },
+            callback: function(value) { return value.toLocaleString('pt-BR'); }
           }
         }
       }
@@ -410,46 +451,49 @@ async function regenerateAIInsights() {
     if (window.lucide) lucide.createIcons();
   }
 
-  try {
-    const res = await fetch('/api/ai-insights', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: state.selectedClient })
-    });
-    const data = await res.json();
+  setTimeout(() => {
+    const totImp = state.campaigns.reduce((acc, c) => acc + (c.impressions || 0), 0) || 154200;
+    const totClk = state.campaigns.reduce((acc, c) => acc + (c.clicks || 0), 0) || 8034;
+    const totInv = state.campaigns.reduce((acc, c) => acc + (c.investment || 0), 0) || 10604.88;
+    const totRev = state.campaigns.reduce((acc, c) => acc + (c.revenue || 0), 0) || 40828.78;
+
+    const ctr = (totClk / totImp * 100).toFixed(2);
+    const cpc = (totInv / totClk).toFixed(2);
+    const roas = (totRev / totInv).toFixed(2);
 
     const text1 = document.getElementById('ai-insight-text-1');
     const text2 = document.getElementById('ai-insight-text-2');
     const recsBox = document.getElementById('ai-recommendations');
 
-    if (text1) text1.innerText = data.summary;
-    if (text2) text2.innerText = `O sistema monitorou ${state.campaigns.length} campanhas e identificou oportunidades de escala imediata.`;
+    if (text1) {
+      text1.innerHTML = `Sua campanha apresentou um aumento de <strong class="text-purple-300">12,4%</strong> no CTR (atingindo ${ctr}%) e um ROAS consolidado de <strong class="text-emerald-400">${roas}x</strong>, indicando um excelente retorno sobre o investimento.`;
+    }
+    if (text2) {
+      text2.innerHTML = `O CPC reduziu <strong class="text-cyan-300">8,7%</strong> (fechando em R$ ${cpc}), o que comprova maior eficiência no custo dos cliques e atratividade nos criativos.`;
+    }
 
-    if (recsBox && data.recommendations) {
-      recsBox.innerHTML = data.recommendations.map(r => `
+    if (recsBox) {
+      recsBox.innerHTML = `
         <div class="flex items-start gap-2 text-slate-400">
           <i data-lucide="check-circle-2" class="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5"></i>
-          <span class="text-[11px]">${r}</span>
+          <span class="text-[11px]">Escalar 20% do orçamento na campanha de maior ROAS (${roas}x).</span>
         </div>
-      `).join('');
+        <div class="flex items-start gap-2 text-slate-400">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-cyan-400 flex-shrink-0 mt-0.5"></i>
+          <span class="text-[11px]">Público do Meta Ads apresentando CTR favorável de ${ctr}%.</span>
+        </div>
+      `;
     }
 
-    if (window.confetti) {
-      confetti({
-        particleCount: 25,
-        spread: 40,
-        origin: { y: 0.8 },
-        colors: ['#7C3AED', '#06B6D4', '#10B981']
-      });
-    }
-  } catch (err) {
-    console.error('Error generating AI insights:', err);
-  } finally {
     if (btn) {
       btn.innerHTML = `<i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>Gerar nova análise com IA</span>`;
       if (window.lucide) lucide.createIcons();
     }
-  }
+
+    if (window.confetti) {
+      confetti({ particleCount: 25, spread: 40, origin: { y: 0.8 }, colors: ['#7C3AED', '#06B6D4', '#10B981'] });
+    }
+  }, 500);
 }
 
 // ----------------- LIVE INDICATORS CALCULATION (Slide 4) -----------------
@@ -474,53 +518,56 @@ function calcIndicatorsLive() {
 async function handleCreateCampaign(e) {
   e.preventDefault();
   const name = document.getElementById('nc-name').value;
-  const clientId = document.getElementById('nc-client').value;
+  const clientId = parseInt(document.getElementById('nc-client').value) || 1;
   const platform = document.getElementById('nc-platform').value;
-  const impressions = document.getElementById('nc-impressions').value;
-  const clicks = document.getElementById('nc-clicks').value;
-  const investment = document.getElementById('nc-investment').value;
-  const revenue = document.getElementById('nc-revenue').value;
+  const impressions = parseInt(document.getElementById('nc-impressions').value) || 0;
+  const clicks = parseInt(document.getElementById('nc-clicks').value) || 0;
+  const investment = parseFloat(document.getElementById('nc-investment').value) || 0;
+  const revenue = parseFloat(document.getElementById('nc-revenue').value) || 0;
 
-  try {
-    const res = await fetch('/api/campaigns', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name,
-        client_id: clientId,
-        platform,
-        impressions,
-        clicks,
-        investment,
-        revenue,
-        status: 'Ativa'
-      })
-    });
+  const clientObj = state.clients.find(c => c.id == clientId);
+  const clientName = clientObj ? clientObj.name : 'Geral';
 
-    const data = await res.json();
-    if (data.success) {
-      closeModal('modal-new-campaign');
-      await loadKPIs();
-      await loadCampaigns();
-      if (window.confetti) confetti();
-    } else {
-      alert(data.error || 'Erro ao criar campanha');
-    }
-  } catch (err) {
-    console.error(err);
-    alert('Erro ao enviar campanha.');
-  }
+  const ctr = impressions > 0 ? (clicks / impressions * 100) : 0;
+  const cpc = clicks > 0 ? (investment / clicks) : 0;
+  const cpm = impressions > 0 ? (investment / impressions * 1000) : 0;
+  const roas = investment > 0 ? (revenue / investment) : 0;
+
+  const newCampaign = {
+    id: Date.now(),
+    client_id: clientId,
+    client_name: clientName,
+    name,
+    platform,
+    impressions,
+    clicks,
+    investment,
+    revenue,
+    ctr,
+    cpc,
+    cpm,
+    roas,
+    status: 'Ativa'
+  };
+
+  // Add to state and localStorage
+  const allStored = JSON.parse(localStorage.getItem('tec_campaigns')) || DEFAULT_CAMPAIGNS;
+  allStored.unshift(newCampaign);
+  localStorage.setItem('tec_campaigns', JSON.stringify(allStored));
+
+  closeModal('modal-new-campaign');
+  await loadCampaigns();
+  await loadKPIs();
+  if (window.confetti) confetti();
 }
 
 async function deleteCampaign(id) {
   if (!confirm('Deseja realmente remover esta campanha?')) return;
-  try {
-    await fetch(`/api/campaigns/${id}`, { method: 'DELETE' });
-    await loadKPIs();
-    await loadCampaigns();
-  } catch (err) {
-    console.error(err);
-  }
+  const allStored = JSON.parse(localStorage.getItem('tec_campaigns')) || DEFAULT_CAMPAIGNS;
+  const updated = allStored.filter(c => c.id !== id);
+  localStorage.setItem('tec_campaigns', JSON.stringify(updated));
+  await loadCampaigns();
+  await loadKPIs();
 }
 
 // ----------------- CSV IMPORT -----------------
@@ -542,53 +589,90 @@ async function executeCSVImport() {
     return;
   }
 
-  try {
-    const res = await fetch('/api/campaigns/import-csv', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ csv_text: text })
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      alert(data.message);
-      closeModal('modal-import-csv');
-      await loadClients();
-      await loadKPIs();
-      await loadCampaigns();
-      if (window.confetti) confetti();
-    } else {
-      alert(data.error || 'Erro ao importar CSV.');
-    }
-  } catch (err) {
-    console.error(err);
-    alert('Falha na requisição de importação.');
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) {
+    alert('O CSV precisa conter ao menos o cabeçalho e uma linha de dados.');
+    return;
   }
+
+  const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
+  let importedCount = 0;
+  const allStored = JSON.parse(localStorage.getItem('tec_campaigns')) || DEFAULT_CAMPAIGNS;
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].split(',').map(c => c.trim());
+    if (cols.length < 4) continue;
+
+    const row = {};
+    headers.forEach((h, idx) => { row[h] = cols[idx]; });
+
+    const name = row['campanha'] || row['nome'] || row['name'] || `Campanha Importada ${i}`;
+    const clientName = row['cliente'] || row['client'] || 'Loja Virtual Express';
+    const platform = row['plataforma'] || row['platform'] || 'Meta Ads';
+    const impressions = parseInt(row['impressoes'] || row['impressions'] || 0);
+    const clicks = parseInt(row['cliques'] || row['clicks'] || 0);
+    const investment = parseFloat(row['investimento'] || row['spend'] || 0);
+    const revenue = parseFloat(row['receita'] || row['revenue'] || 0);
+
+    const ctr = impressions > 0 ? (clicks / impressions * 100) : 0;
+    const cpc = clicks > 0 ? (investment / clicks) : 0;
+    const cpm = impressions > 0 ? (investment / impressions * 1000) : 0;
+    const roas = investment > 0 ? (revenue / investment) : 0;
+
+    allStored.unshift({
+      id: Date.now() + i,
+      client_id: 1,
+      client_name: clientName,
+      name,
+      platform,
+      impressions,
+      clicks,
+      investment,
+      revenue,
+      ctr,
+      cpc,
+      cpm,
+      roas,
+      status: 'Ativa'
+    });
+    importedCount++;
+  }
+
+  localStorage.setItem('tec_campaigns', JSON.stringify(allStored));
+  alert(`${importedCount} campanhas importadas com sucesso!`);
+  closeModal('modal-import-csv');
+  await loadCampaigns();
+  await loadKPIs();
+  if (window.confetti) confetti();
 }
 
 // ----------------- PDF GENERATOR (jsPDF White-Label) -----------------
 async function handleGeneratePDF(e) {
-  e.preventDefault();
+  if (e && e.preventDefault) e.preventDefault();
   const agencyName = document.getElementById('pdf-agency-name').value || 'Agência Alpha Digital';
   const clientId = document.getElementById('pdf-client-select').value;
   const period = document.getElementById('pdf-period').value;
   const title = document.getElementById('pdf-title').value;
 
-  // Find client name
   const clientObj = state.clients.find(c => c.id == clientId);
   const clientName = clientObj ? clientObj.name : 'Todos os Clientes (Consolidado)';
 
-  // Calculate current KPIs for this export
-  const kpiRes = await fetch(`/api/kpis?client_id=${clientId}`);
-  const kpiData = await kpiRes.json();
+  const filteredCamp = (clientId === 'all')
+    ? state.campaigns
+    : state.campaigns.filter(c => c.client_id == clientId);
 
-  // Generate with jsPDF
+  const totImp = filteredCamp.reduce((acc, c) => acc + (c.impressions || 0), 0) || 154200;
+  const totClk = filteredCamp.reduce((acc, c) => acc + (c.clicks || 0), 0) || 8034;
+  const totInv = filteredCamp.reduce((acc, c) => acc + (c.investment || 0), 0) || 10604.88;
+  const totRev = filteredCamp.reduce((acc, c) => acc + (c.revenue || 0), 0) || 40828.78;
+
+  const ctr = (totClk / totImp * 100).toFixed(2);
+  const cpc = (totInv / totClk).toFixed(2);
+  const cpm = (totInv / totImp * 1000).toFixed(2);
+  const roas = (totRev / totInv).toFixed(2);
+
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({
-    orientation: 'portrait',
-    unit: 'mm',
-    format: 'a4'
-  });
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
   // Background Header
   doc.setFillColor(15, 20, 36);
@@ -600,23 +684,23 @@ async function handleGeneratePDF(e) {
   doc.setFont('helvetica', 'bold');
   doc.text('TecMarketing', 14, 20);
 
-  // Agency White Label Subtitle
+  // Agency Subtitle
   doc.setFontSize(10);
   doc.setTextColor(168, 85, 247);
   doc.text(`Relatório emitido por: ${agencyName}`, 14, 28);
 
-  // Date and Period
+  // Details
   doc.setTextColor(148, 163, 184);
   doc.setFontSize(9);
   doc.text(`Período: ${period} | Cliente: ${clientName}`, 14, 36);
 
-  // Document Title
+  // Title
   doc.setTextColor(15, 23, 42);
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.text(title, 14, 56);
 
-  // 4 Top KPI Boxes (Slide 4 & 12)
+  // 4 KPI Boxes
   const drawKpiBox = (x, y, label, val, formula) => {
     doc.setFillColor(248, 250, 252);
     doc.setDrawColor(226, 232, 240);
@@ -637,12 +721,12 @@ async function handleGeneratePDF(e) {
     doc.text(formula, x + 4, y + 21);
   };
 
-  drawKpiBox(14, 63, 'CTR (Cliques/Imp.)', `${kpiData.ctr.toFixed(2)}%`, '+12,4% vs anterior');
-  drawKpiBox(61, 63, 'CPC (Custo/Clique)', `R$ ${kpiData.cpc.toFixed(2)}`, '-8,7% economia');
-  drawKpiBox(108, 63, 'CPM (Custo/1k Imp.)', `R$ ${kpiData.cpm.toFixed(2)}`, 'Impressões eficientes');
-  drawKpiBox(155, 63, 'ROAS (Retorno Ads)', `${kpiData.roas.toFixed(2)}x`, '+18,9% rentabilidade');
+  drawKpiBox(14, 63, 'CTR (Cliques/Imp.)', `${ctr}%`, '+12,4% vs anterior');
+  drawKpiBox(61, 63, 'CPC (Custo/Clique)', `R$ ${cpc}`, '-8,7% economia');
+  drawKpiBox(108, 63, 'CPM (Custo/1k Imp.)', `R$ ${cpm}`, 'Impressões eficientes');
+  drawKpiBox(155, 63, 'ROAS (Retorno Ads)', `${roas}x`, '+18,9% rentabilidade');
 
-  // Executive AI Summary Section
+  // Executive AI Summary
   doc.setFillColor(243, 232, 255);
   doc.setDrawColor(216, 180, 254);
   doc.roundedRect(14, 93, 182, 26, 2, 2, 'FD');
@@ -655,23 +739,19 @@ async function handleGeneratePDF(e) {
   doc.setTextColor(51, 65, 85);
   doc.setFontSize(8.5);
   doc.setFont('helvetica', 'normal');
-  const aiText = `Sua campanha atingiu excelente eficiência com CTR de ${kpiData.ctr.toFixed(2)}% e ROAS de ${kpiData.roas.toFixed(2)}x. O custo por clique reduziu 8,7%, sinalizando alta atratividade criativa e oportunidade para escalar investimento com segurança.`;
+  const aiText = `Sua campanha atingiu excelente eficiência com CTR de ${ctr}% e ROAS de ${roas}x. O custo por clique reduziu 8,7%, sinalizando alta atratividade criativa e oportunidade para escalar investimento com segurança.`;
   doc.text(doc.splitTextToSize(aiText, 174), 18, 106);
 
-  // Table of campaigns
-  const filteredCamp = (clientId === 'all')
-    ? state.campaigns
-    : state.campaigns.filter(c => c.client_id == clientId);
-
+  // Table
   const tableBody = filteredCamp.map(c => [
     c.name,
     c.platform,
-    c.impressions.toLocaleString('pt-BR'),
-    c.clicks.toLocaleString('pt-BR'),
-    `R$ ${c.investment.toFixed(2)}`,
-    `${c.ctr.toFixed(2)}%`,
-    `R$ ${c.cpc.toFixed(2)}`,
-    `${c.roas.toFixed(2)}x`,
+    Number(c.impressions).toLocaleString('pt-BR'),
+    Number(c.clicks).toLocaleString('pt-BR'),
+    `R$ ${Number(c.investment).toFixed(2)}`,
+    `${Number(c.ctr).toFixed(2)}%`,
+    `R$ ${Number(c.cpc).toFixed(2)}`,
+    `${Number(c.roas).toFixed(2)}x`,
     c.status
   ]);
 
@@ -680,42 +760,30 @@ async function handleGeneratePDF(e) {
     head: [['Campanha', 'Canal', 'Impressões', 'Cliques', 'Gasto', 'CTR', 'CPC', 'ROAS', 'Status']],
     body: tableBody,
     theme: 'grid',
-    headStyles: {
-      fillColor: [124, 58, 237],
-      textColor: [255, 255, 255],
-      fontSize: 8,
-      fontStyle: 'bold'
-    },
-    styles: {
-      fontSize: 7.5,
-      cellPadding: 2.5
-    },
+    headStyles: { fillColor: [124, 58, 237], textColor: [255, 255, 255], fontSize: 8, fontStyle: 'bold' },
+    styles: { fontSize: 7.5, cellPadding: 2.5 },
     margin: { left: 14, right: 14 }
   });
 
-  // Footer with LGPD & Signature
-  const finalY = doc.lastAutoTable.finalY + 15;
+  // Footer
   doc.setFontSize(8);
   doc.setTextColor(148, 163, 184);
   doc.text('Relatório gerado pelo software TecMarketing Micro-SaaS • Em conformidade com a LGPD', 14, 285);
 
-  // Save PDF to browser
   const filename = `Relatorio_${clientName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);
 
-  // Save report to backend history
-  await fetch('/api/reports', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      client_id: clientId === 'all' ? 1 : clientId,
-      title: title,
-      agency_name: agencyName,
-      period: period,
-      kpis: kpiData,
-      ai_summary: aiText
-    })
+  // Save report to history
+  const storedReports = JSON.parse(localStorage.getItem('tec_reports')) || [];
+  storedReports.unshift({
+    id: Date.now(),
+    title,
+    client_name: clientName,
+    period,
+    created_at: new Date().toISOString(),
+    agency_name: agencyName
   });
+  localStorage.setItem('tec_reports', JSON.stringify(storedReports));
 
   closeModal('modal-generate-pdf');
   await loadReports();
@@ -728,13 +796,8 @@ function generateSampleDirectPDF() {
 }
 
 async function loadReports() {
-  try {
-    const res = await fetch('/api/reports');
-    state.reports = await res.json();
-    renderReportsHistory();
-  } catch (err) {
-    console.error('Error loading reports:', err);
-  }
+  state.reports = JSON.parse(localStorage.getItem('tec_reports')) || [];
+  renderReportsHistory();
 }
 
 function renderReportsHistory() {
@@ -812,8 +875,8 @@ function selectClientFilter(id) {
   const select = document.getElementById('filter-client');
   if (select) select.value = id;
   switchTab('dashboard');
-  loadKPIs();
   loadCampaigns();
+  loadKPIs();
 }
 
 async function handleCreateClient(e) {
@@ -822,33 +885,28 @@ async function handleCreateClient(e) {
   const segment = document.getElementById('client-segment').value;
   const contact_email = document.getElementById('client-email').value;
 
-  try {
-    const res = await fetch('/api/clients', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, segment, contact_email })
-    });
-    const data = await res.json();
-    if (data.success) {
-      closeModal('modal-new-client');
-      await loadClients();
-    }
-  } catch (err) {
-    console.error(err);
-  }
+  const newC = {
+    id: Date.now(),
+    name,
+    segment: segment || 'Marketing Digital',
+    contact_email,
+    total_campaigns: 0,
+    total_spend: 0
+  };
+
+  const stored = JSON.parse(localStorage.getItem('tec_clients')) || DEFAULT_CLIENTS;
+  stored.push(newC);
+  localStorage.setItem('tec_clients', JSON.stringify(stored));
+
+  closeModal('modal-new-client');
+  await loadClients();
 }
 
 // ----------------- PITCH & 11 SLIDES MODE (Gabriel & Allan) -----------------
 async function loadSlides() {
-  try {
-    const res = await fetch('/api/slides');
-    const data = await res.json();
-    state.slides = data.slides || [];
-    renderSlidesIndex();
-    renderCurrentSlide();
-  } catch (err) {
-    console.error('Error loading slides:', err);
-  }
+  state.slides = DEFAULT_SLIDES;
+  renderSlidesIndex();
+  renderCurrentSlide();
 }
 
 function renderSlidesIndex() {
@@ -948,7 +1006,6 @@ function sendAIChat(e) {
 
   const box = document.getElementById('ai-chat-box');
 
-  // Append User message
   box.innerHTML += `
     <div class="flex items-start justify-end gap-2.5">
       <div class="bg-purple-600/30 border border-purple-500/40 p-3 rounded-2xl rounded-tr-sm text-slate-100 max-w-lg">
@@ -960,7 +1017,6 @@ function sendAIChat(e) {
   input.value = '';
   box.scrollTop = box.scrollHeight;
 
-  // Simulate intelligent response
   setTimeout(() => {
     let responseText = '';
     const qLower = query.toLowerCase();
@@ -991,8 +1047,8 @@ function sendAIChat(e) {
 function applyFilters() {
   const select = document.getElementById('filter-client');
   if (select) state.selectedClient = select.value;
-  loadKPIs();
   loadCampaigns();
+  loadKPIs();
 }
 
 function filterCampaignsTable() {
@@ -1022,14 +1078,14 @@ function filterCampaignsTable() {
         <span class="text-[10px] text-slate-400">${c.client_name || 'Geral'}</span>
       </td>
       <td class="py-3 px-4 text-slate-300 font-medium">${c.platform}</td>
-      <td class="py-3 px-4 text-slate-300 font-mono">${c.impressions.toLocaleString('pt-BR')}</td>
-      <td class="py-3 px-4 text-slate-300 font-mono">${c.clicks.toLocaleString('pt-BR')}</td>
-      <td class="py-3 px-4 text-slate-300 font-mono">R$ ${c.investment.toFixed(2)}</td>
-      <td class="py-3 px-4 text-slate-300 font-mono">R$ ${c.revenue.toFixed(2)}</td>
-      <td class="py-3 px-4 font-bold text-purple-400 font-mono">${c.ctr.toFixed(2)}%</td>
-      <td class="py-3 px-4 font-bold text-cyan-400 font-mono">R$ ${c.cpc.toFixed(2)}</td>
-      <td class="py-3 px-4 font-semibold text-slate-400 font-mono">R$ ${c.cpm.toFixed(2)}</td>
-      <td class="py-3 px-4 font-bold text-emerald-400 font-mono">${c.roas.toFixed(2)}x</td>
+      <td class="py-3 px-4 text-slate-300 font-mono">${Number(c.impressions).toLocaleString('pt-BR')}</td>
+      <td class="py-3 px-4 text-slate-300 font-mono">${Number(c.clicks).toLocaleString('pt-BR')}</td>
+      <td class="py-3 px-4 text-slate-300 font-mono">R$ ${Number(c.investment).toFixed(2)}</td>
+      <td class="py-3 px-4 text-slate-300 font-mono">R$ ${Number(c.revenue).toFixed(2)}</td>
+      <td class="py-3 px-4 font-bold text-purple-400 font-mono">${Number(c.ctr).toFixed(2)}%</td>
+      <td class="py-3 px-4 font-bold text-cyan-400 font-mono">R$ ${Number(c.cpc).toFixed(2)}</td>
+      <td class="py-3 px-4 font-semibold text-slate-400 font-mono">R$ ${Number(c.cpm).toFixed(2)}</td>
+      <td class="py-3 px-4 font-bold text-emerald-400 font-mono">${Number(c.roas).toFixed(2)}x</td>
       <td class="py-3 px-4"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${c.status === 'Ativa' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}">${c.status}</span></td>
       <td class="py-3 px-4 text-right">
         <button onclick="deleteCampaign(${c.id})" class="text-slate-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors">
@@ -1059,7 +1115,6 @@ function toggleNotifications() {
 }
 
 function toggleUserDropdown() {
-  // Toggle between Gabriel and Allan
   if (state.currentUser.name === 'Gabriel') {
     state.currentUser = { name: 'Allan', agency: 'Agência Alpha Digital', avatar: 'A' };
   } else {
@@ -1094,12 +1149,14 @@ function downloadAllAgencyData() {
 
 function clearAllDataDemo() {
   if (confirm('Restaurar dados padrão de apresentação?')) {
+    localStorage.removeItem('tec_campaigns');
+    localStorage.removeItem('tec_clients');
+    localStorage.removeItem('tec_reports');
     window.location.reload();
   }
 }
 
 function setupEventListeners() {
-  // Close modals on clicking outside
   document.querySelectorAll('[id^="modal-"]').forEach(modal => {
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
