@@ -1,0 +1,79 @@
+/* Custom animations and dark neon styling matching Slide 12 */
+:root {
+  --bg-primary: #090D16;
+  --bg-card: #111625;
+  --bg-card-hover: #161D31;
+  --border-card: #1D2640;
+  --color-purple: #7C3AED;
+  --color-purple-light: #9333EA;
+  --color-purple-glow: rgba(124, 58, 237, 0.25);
+  --color-cyan: #06B6D4;
+  --color-cyan-glow: rgba(6, 182, 212, 0.25);
+}
+
+body {
+  background-color: #090D16;
+  color: #F8FAFC;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090D16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 25px rgba(124, 58, 237, 0.2);
+}
+
+.glow-purple-border {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+}
+
+/* Slide 12 Table Styling */
+.table-dark th {
+  background-color: #111625;
+  color: #94A3B8;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+}
+
+.table-dark tr:hover td {
+  background-color: rgba(22, 29, 49, 0.7);
+}
+
+/* Pulse animation for AI badge */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s infinite ease-in-out;
+}
